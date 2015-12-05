@@ -6,4 +6,10 @@
 
 ####String
 
-append,bitcount,decr,get,getbit,getrange,incr,incrby,mget,msetnx,set,setbit,setrange,strlen.
+append bitcount decr get getbit getrange incr incrby mget msetnx set setbit setrange strlen
+
+####keys
+del exists randomkey rename keys type
+
+####list 
+blpop lrange brpop lrem brpoplpush lset lindex ltrim linsert rpop llen rpoplpush lpop rpush lpush rpushx lpushx
