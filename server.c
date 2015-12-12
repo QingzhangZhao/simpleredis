@@ -16,7 +16,7 @@
 #include"cmd_parse.h"
 #include"call.h"
 #define MAXSIZE 80
-#define MYPORT 1234
+#define MYPORT 6379
 #define BACKLOG 10
 #define BUFSIZE 100
 

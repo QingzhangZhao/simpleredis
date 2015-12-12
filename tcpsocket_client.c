@@ -45,7 +45,7 @@ int main(int argc,char * argv[])
 		}
 
 		ser_addr.sin_family=AF_INET;
-		ser_addr.sin_port=htons(1234);
+		ser_addr.sin_port=htons(6379);
 		memcpy(&ser_addr.sin_addr,&addrs,sizeof(struct in_addr));
 		bzero(ser_addr.sin_zero,8);
 		ret=connect(sockfd,(struct sockaddr *)&ser_addr,sizeof(struct sockaddr));

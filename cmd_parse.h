@@ -20,7 +20,21 @@ list * recv_parse(char *command);
 	 "rpush",
 	 "lpop",
 	 "rpop",
-	 "llen"
+	 "llen",
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
  };
 char *  cmd_parse(hashTable *table,list *cmd_list_head);
 
