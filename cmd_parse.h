@@ -21,6 +21,16 @@ list * recv_parse(char *command);
 	 "lpop",
 	 "rpop",
 	 "llen",
+	 "hdel",
+	 "hlen",
+	 "hexists",
+	 "hget",
+	 "hset",
+	 "hincrby",
+	 "hincrbyfloat",
+	 "hkeys",
+	 "hvals",
+	 "hmset",
  
  
  

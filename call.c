@@ -365,10 +365,11 @@ char * call(hashTable *table,int i,list *cmd_list_head)
 	else if (i==16)
 	{
 		if (len!=3)
-			return "(error) ERR wrong number of arguments for 'setrange' command";
+			return "(error) ERR wrong number of arguments for 'lpush' command";
 		node=(node->next)->next;
-		char * value = node->value;
-	
+        char * value =malloc(sizeof(char)*strlen(node->value));	
+        strcpy(value,node->value);
+
 		hashNode * hnode =getTable(table,key);
 		if (hnode)
 			if (hnode->type ==3)
@@ -383,7 +384,7 @@ char * call(hashTable *table,int i,list *cmd_list_head)
 			list * l = cmd_list_init(value);
 		    sds* t_key= new_sds(key);
 		    addTable(table,t_key,l,3);   
-		    return "init OK!";
+			return "init OK!";
 		}
 
 	}
@@ -391,16 +392,18 @@ char * call(hashTable *table,int i,list *cmd_list_head)
 	else if (i==17)
 	{
         if (len!=3)
-			return "(error) ERR wrong number of arguments for 'setrange' command";
+			return "(error) ERR wrong number of arguments for 'rpush' command";
+		
 		node=(node->next)->next;
 		char * value =malloc(sizeof(char)*strlen(node->value));
-	      strcpy(value,node->value);
+	    strcpy(value,node->value);
+
 		hashNode * hnode =getTable(table,key);
 		if (hnode)
 			if (hnode->type ==3)
 			{
 			   cmd_list_append((list *)(hnode->value),value);
-			   printf("append value =%s\n",(((list *)(hnode->value))->head)->value);
+			   printf("append value =%s\n",value);
 		       return "rpush OK!";
 			}
 			else 
@@ -420,7 +423,7 @@ char * call(hashTable *table,int i,list *cmd_list_head)
 			return "(error) ERR wrong number of arguments for 'lpop' command";
 	    hashNode *hnode = getTable(table,key);
      	if (hnode)
-			if (((list *)(node->value))->head)
+			if (((list *)(hnode->value))->head)
 			    if (hnode->type ==3)
 			{
 		        char * str =  malloc(sizeof(char )*50);
@@ -432,10 +435,12 @@ char * call(hashTable *table,int i,list *cmd_list_head)
 			else 
 		       return "(error) WRONGTYPE Operation against a key holding the wrong kind of value"; 
 			else
-				return "(nill)";
+				return "(data nill)";
 		else
-		   return "(nil)";
+		   return "(key nil)";
 	}
+
+	//bug?
     //command is "rpop"
     else if (i==19)
 	{
@@ -443,21 +448,22 @@ char * call(hashTable *table,int i,list *cmd_list_head)
 			return "(error) ERR wrong number of arguments for 'rpop' command";
 	    hashNode *hnode = getTable(table,key);
      	if (hnode)
-			if (((list *)(node->value))->head)
+			if (((list *)(hnode->value))->tail)
 			    if (hnode->type ==3)
 			{
+				printf("tail exists!\n");
 		        char * str =  malloc(sizeof(char )*50);
 				memset(str,0,sizeof(char)*50);
 				strcpy(str,cmd_list_rget((list *)(hnode->value))); 
 				cmd_list_rpop((list *)(hnode->value));
 				return str;
 			}
-			else 
-		       return "(error) WRONGTYPE Operation against a key holding the wrong kind of value"; 
+			    else 
+		           return "(error) WRONGTYPE Operation against a key holding the wrong kind of value"; 
 			else
-				return "(nill)";
+				return "(rpop data nill)";
 		else
-		   return "(nil)";
+		   return "(key nil)";
 		
 
 
@@ -484,6 +490,175 @@ char * call(hashTable *table,int i,list *cmd_list_head)
 			return "(integer) 0";
 
 	}
+
+	//cmomand is "hdel"
+	else if (i==21)
+	{
+       if(len!=3)
+	      return "(error) ERR wrong number of arguments for 'hexists' command";
+	    hashNode *hnode =getTable(table,key);
+	  if (hnode)
+		  if(hnode->type==4)
+	  {
+       	 node=(node->next)->next;
+		 char * t_key  = node->value;
+
+	    hashTable   *t = ((getTable(table,key))->value);
+		hashNode * f_node = getTable(t,t_key);
+
+		if (f_node)
+		{
+			removeTable(t,t_key);
+			return "(integer) 1";
+
+		}
+		else 
+			return "(integer) 0";
+
+	  }
+	      else
+		      return "(error) WRONGTYPE Operation against a key holding the wrong kind of value";
+	  else
+		  return "(integer) 0";
+
+	}
+
+	//cmomand is "hlen"
+	else if (i==22)
+	{
+
+	}
+
+  	//cmomand is "hexists"
+	else if (i==23)
+	{
+      if(len!=3)
+	      return "(error) ERR wrong number of arguments for 'hexists' command";
+	    hashNode *hnode =getTable(table,key);
+	  if (hnode)
+		  if(hnode->type==4)
+	  {
+       	 node=(node->next)->next;
+		 char * t_key  = node->value;
+
+	    hashTable   *t = ((getTable(table,key))->value);
+		hashNode * f_node = getTable(t,t_key);
+
+		if (f_node)
+		{
+			return "(integer) 0";
+
+		}
+		else 
+			return "(integer) 0";
+
+	  }
+	      else
+		      return "(error) WRONGTYPE Operation against a key holding the wrong kind of value";
+	  else
+		  return "(integer) 0";
+
+	}
+
+	//cmomand is "hget"
+	else if (i==24)
+	{
+ 
+		if(len!=3)
+	      return "(error) ERR wrong number of arguments for 'hget' command";
+	    hashNode *hnode =getTable(table,key);
+	   if (hnode)
+		  if(hnode->type==4)
+	  {
+       	 node=(node->next)->next;
+		 char * t_key  = node->value;
+
+
+	    hashTable   *t = ((getTable(table,key))->value);
+		hashNode * f_node = getTable(t,t_key);
+
+		if (f_node)
+		{
+			sds * value = f_node->value;
+			return value->buf;
+
+		}
+		else 
+			return "(nil)";
+
+	  }
+	      else
+		      return "(error) WRONGTYPE Operation against a key holding the wrong kind of value";
+	  else
+		  return "(nil)";
+
+
+	}
+
+	//cmomand is "hset"
+	else if (i==25)
+	{
+         if(len!=4)
+			return "(error) ERR wrong number of arguments for 'hset' command";
+		 node=(node->next)->next;
+		 char * filed  = node->value;
+		 node = (node->next);
+		 char *value = node->value;
+		 int i;int flag=2;
+		 for (i=0;i<strlen(value);i++)
+		 {
+			 if ((value[i])>='0'&&(value[i])<='9')
+				 continue;
+			 else
+			 {
+				 flag=1;
+				 break;
+		     }
+		 }
+		
+		sds* t_key= new_sds(key);
+        sds *t_value = new_sds(value); 
+		sds * t_filed=new_sds(filed);
+		
+        hashTable * t = new_Table(3);
+		addTable(t,t_filed,t_value,flag);
+		// memcpy(t_key,key,strlen(key));
+		//memcpy(t_value,value,strlen(value));
+		 addTable(table,t_key,t,4);   
+		
+		 return "(integer) 1";
+	
+
+	}
+	//cmomand is "hincrby"
+	else if (i==26)
+	{
+
+	}
+	//cmomand is "hincrbyfloat"
+	else if (i==27)
+	{
+
+	}
+	//cmomand is "hkeys"
+	else if (i==28)
+	{
+
+
+	}
+	//cmomand is "hvals"
+	else if (i==29)
+	{
+
+	}
+	//cmomand is "hmset"
+	else if (i==30)
+	{
+
+	}
+
+
+
 	//command is "getbit"
 	
 	//command is "setbit"

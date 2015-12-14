@@ -188,17 +188,23 @@ list * keysTable(hashTable *table)
 	list * keys=NULL;
     int i;
 	int first = 1;
+	hashNode *node;
 	for (i=0;i<(table->size);i++)
 	{
 	   if(((table->table)[i])!=NULL)
 		{
-		 if (first==1)
-		 {
-			 keys =  cmd_list_init(((sds *)((table->table)[i]->key))->buf);
-		     first =0;
-		 }
-         else
-	        cmd_list_append(keys,((sds *)(table->table)[i]->key)->buf);
+			node = (table->table)[i];
+			for (node;node;node=node->next)
+			{
+				if (first==1)
+		        {
+			      keys =  cmd_list_init(((sds *)(node->key))->buf);
+		           first =0;
+		          }
+                 else
+	           cmd_list_append(keys,((sds *)(node->key))->buf);
+
+			}
 		}
 	}
 		 return keys;
