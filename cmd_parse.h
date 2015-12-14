@@ -31,19 +31,22 @@ list * recv_parse(char *command);
 	 "hkeys",
 	 "hvals",
 	 "hmset",
+	 "sadd",
+	 "smove",
+	 "scard",
+	 "spop",
+	 "sdiff",
+	 "srandmember",
+	 "srem",
+	 "sinter",
+	 "sscan",
+	 "sunion",
+	 "sismember",
+	 "smembers"
  
  
  
- 
- 
- 
- 
- 
- 
- 
- 
- 
- 
+  
  
  };
 char *  cmd_parse(hashTable *table,list *cmd_list_head);

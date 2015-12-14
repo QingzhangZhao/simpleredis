@@ -31,7 +31,8 @@ typedef struct hashTable{
 }hashTable;
 
 
-//create a new hashTable
+//create a new hashTable  
+//order is used to ensure the size of the table need to create
 hashTable *  new_Table(int order);
 
 //free a hashTable

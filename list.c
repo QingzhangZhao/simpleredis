@@ -40,8 +40,6 @@ void cmd_list_append(list*head,char  *value)
 	   head->tail=cmd_node;
 	   head->head=cmd_node;
 	}
-	   if(head->tail)
-		printf("tail yes!\n");
     head->len+=1;
 }
 

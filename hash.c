@@ -124,7 +124,7 @@ void freeTable(hashTable *table)
 void addTable(hashTable *table,void * key,void  *value,int type)
 {     
         int i =ngx_murmur_hash2(((sds *)key)->buf,strlen(((sds *)key)->buf))%(table->size);
-		printf(" key =%s len =%d set i = %d\n",((sds *)key)->buf,strlen(key),i);
+		printf("#key =%s len =%d set i = %d\n",((sds *)key)->buf,strlen(key),i);
 		
 		hashNode *node,*new_node,*prev;
 
@@ -144,6 +144,7 @@ void addTable(hashTable *table,void * key,void  *value,int type)
 		if((table->table)[i]==NULL){
 			(table->table)[i]=new_node;
 			printf("add OK!\n");
+			table->used+=1;
 			return;
 		}
 		prev=(table->table)[i];	
@@ -152,6 +153,7 @@ void addTable(hashTable *table,void * key,void  *value,int type)
 			prev=node;
 		}
 		prev->next=new_node;
+		table->used+=1;
 }
 hashNode *  getTable(hashTable *table,void *key)
 {   
@@ -177,6 +179,7 @@ void removeTable(hashTable *table,void *key)
 		printf("del OK!");
 		free(node);
 		(table->table)[i]=NULL;
+		table->used -=1;
 		return;
 	}
 	//bugs

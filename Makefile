@@ -1,10 +1,10 @@
 all: ser client
 ser: hash.o list.o sds.o server.o cmdparse.o call.o  
-	gcc -o ser  server.o  hash.o list.o sds.o cmdparse.o call.o 
+	gcc -g -o ser  server.o  hash.o list.o sds.o cmdparse.o call.o 
 server.o:
 	gcc -o server.o -c server.c 
 client: 
-	gcc -o client  tcpsocket_client.c
+	gcc -g -o client  tcpsocket_client.c
 cmdparse.o:
 	gcc -o cmdparse.o -c cmd_parse.c
 call.o:
