@@ -119,6 +119,44 @@ void  cmd_list_rpop(list *head)
 		 return;
 }
 
+void * cmd_list_lindex(list *head,int count)
+{
+	int i;
+	if(head->len>=1)
+	{
+     listNode * p = head->head;
+	 for (i=0;i<count;i++)
+	 {
+		 if (p)
+		 p=p->next;
+		 else
+			 return NULL;
+	 }
+	return p->value;
+	
+	}
+	else 
+		 return NULL;
+}
 
+void * cmd_list_lset(list *head,int count,void * value)
+{
+	int i;
+	if(head->len>=1)
+	{
+     listNode * p = head->head;
+	 for (i=0;i<count;i++)
+	 {
+		 if (p)
+		 p=p->next;
+		 else
+			 return NULL;
+	 }
+      if (p)
+		  p->value =  value;
+	  
+	}
+	else 
+		 return NULL;
 
-
+}

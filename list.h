@@ -41,9 +41,9 @@ void cmd_list_lpop(list *head);
 
 int  cmd_list_llen(list *head);
 
+void * cmd_list_lindex(list *head,int count);
 
-
-
+void * cmd_list_lset(list *head,int count,void *value);
 
 
 

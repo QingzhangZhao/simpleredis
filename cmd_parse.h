@@ -42,12 +42,19 @@ list * recv_parse(char *command);
 	 "sscan",
 	 "sunion",
 	 "sismember",
-	 "smembers"
- 
- 
- 
-  
- 
+	 "smembers",
+	 "lpushx",
+	 "rpushx",
+	 "lrange",
+	 "lrem",
+	 "lset",
+	 "lindex",
+	 "ltrim",
+	 "linsert",
+	 "rpoplpush",
+	 "blpop",
+	 "brpop",
+	 "brpoplpush" 
  };
 char *  cmd_parse(hashTable *table,list *cmd_list_head);
 

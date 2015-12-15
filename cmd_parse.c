@@ -43,14 +43,14 @@ char *  cmd_parse(hashTable *table,list *cmd_list_head)
       char * cmd_name = (cmd_list_head ->head)->value;          
       
       int i;
-	  for (i=0;i<43;i++)
+	  for (i=0;i<55;i++)
 	  {
 		  if (strcmp(cmd_name,commandtable[i])==0)	  {
 				break;
 		  }
 	  }
      printf("Runing command is %s\n",commandtable[i]);  
-	 if (i==43)
+	 if (i==55)
 	 {
 		 return "Command Not Found!!";
 	 }

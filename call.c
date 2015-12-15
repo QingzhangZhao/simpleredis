@@ -406,7 +406,6 @@ char * call(hashTable *table,int i,list *cmd_list_head)
 			   cmd_list_append((list *)(hnode->value),value);
 			   printf("append value =%s\n",value);
 		       return "rpush OK!";
-            hashTable * t = new_Table(3);
 			}
 			else 
 		       return "(error) WRONGTYPE Operation against a key holding the wrong kind of value";
@@ -889,10 +888,8 @@ char * call(hashTable *table,int i,list *cmd_list_head)
           sds *t_member = new_sds(member); 
           sds * t_key =new_sds(key); 
 		  hashTable * set = new_Table(3);
-	      printf("first add");
-		 addTable(set,t_member,NULL,5);
-	      printf("two add");
-		addTable(table,t_key,set,5);   
+		  addTable(set,t_member,NULL,5);
+		  addTable(table,t_key,set,5);   
 		 return "set init ok!";
 		}
 	}
@@ -1029,7 +1026,43 @@ char * call(hashTable *table,int i,list *cmd_list_head)
 	//cmomand is "sdiff"
 	else if (i==35)
 	{
-		return "not support yet!";
+		if (len!=3)
+			return "(error) ERR wrong number of arguments for 'sunion' command"; 
+		//get the  smallest scard of s1 and s2 
+		node=(node->next)->next;
+		char * key_2 = node->value;
+	    hashNode *hnode =getTable(table,key);
+		hashNode *node_2 = getTable(table,key_2);
+	   if (hnode)
+		  if(hnode->type==5)
+		  {
+	        list * keys =keysTable(hnode->value);
+			  if (keys)
+		{
+            char *str = malloc(sizeof(char)*200);
+			memset(str,0,sizeof(char)*200);
+			listNode * p = keys->head;
+			for (p;p;p=p->next)
+			{
+
+	  		    hashTable   *t_2 = (node_2->value);
+				hashNode * f_node = getTable(t_2,p->value);
+				if (f_node);
+				else
+				{
+					strcat(str,p->value);
+					strcat(str,"\n");
+				}
+			}
+		      return str;
+		}
+			  else
+			  return "(null)";
+		  }	 else
+		      return "(error) WRONGTYPE Operation against a key holding the wrong kind of value";
+	  else
+		  return "(null)";
+
 	}
 
 	//cmomand is "srandmember"
@@ -1102,7 +1135,83 @@ char * call(hashTable *table,int i,list *cmd_list_head)
 	//cmomand is "sinter"
 	else if (i==38)
 	{
-		return "not support yet!";
+		if (len!=3)
+			return "(error) ERR wrong number of arguments for 'sunion' command"; 
+		//get the  smallest scard of s1 and s2 
+        int s1,s2;
+		node=(node->next)->next;
+		char * key_2 = node->value;
+	    hashNode *hnode =getTable(table,key);
+	   if (hnode)
+		  if(hnode->type==5)
+		  {
+			  hashTable   *t = (hnode->value);
+
+			   s1 =t->used; 
+		  }else
+		      return "(error) WRONGTYPE Operation against a key holding the wrong kind of value";
+	  else
+		  return "(null)";
+
+	    hashNode *hnode_2=getTable(table,key_2);
+		if (hnode)
+		  if(hnode->type==5)
+		  {
+			  hashTable   *t = (hnode_2->value);
+			  s2 =t->used; 
+		  }else
+		      return "(error) WRONGTYPE Operation against a key holding the wrong kind of value";
+	  else
+		  return "(null)"; 
+		// ismember the smallest to another if is add
+          if (s1<=s2)
+		  {
+			  list * keys =keysTable(hnode->value);
+			  if (keys)
+		{
+            char *str = malloc(sizeof(char)*200);
+			memset(str,0,sizeof(char)*200);
+			listNode * p = keys->head;
+			for (p;p;p=p->next)
+			{
+
+	  		    hashTable   *t_2 = (hnode_2->value);
+				hashNode * f_node = getTable(t_2,p->value);
+				if (f_node)
+				{
+					strcat(str,p->value);
+					strcat(str,"\n");
+				}
+			}
+			return str;
+		}
+		else 
+			return "null";
+		  }
+		  else
+		  {
+			  list * keys =keysTable(hnode_2->value);
+			  if (keys)
+		{
+            char *str = malloc(sizeof(char)*200);
+			memset(str,0,sizeof(char)*200);
+			listNode * p = keys->head;
+			for (p;p;p=p->next)
+			{
+
+	  		    hashTable   *t_1 = (hnode->value);
+				hashNode * f_node = getTable(t_1,p->value);
+				if (f_node)
+				{
+					strcat(str,p->value);
+					strcat(str,"\n");
+				}
+			}
+			return str;
+		}
+		else 
+			return "null";
+		  }
 	}
 
 	//cmomand is "sscan"
@@ -1120,29 +1229,134 @@ char * call(hashTable *table,int i,list *cmd_list_head)
 	    hashNode *hnode =getTable(table,key);
         node=(node->next)->next;
 		char * s2 = node->value;
-
+		hashNode *node_2 = getTable(table,s2);
 	   if (hnode)
 		  if(hnode->type==5)
 		  {
 			  list * keys =keysTable(hnode->value); 
-		  }
 	   //s1 exists and has members
 	     if(keys)
 		 {
+			 //s2 exists
+			 if(node_2)
+				 if(node_2->type==5)
+				 {
+					 list * keys_2 =keysTable(node_2->value);
+				 //s1 exists and has members adn s2 also
+					 if(keys_2)
+					 {
 
+						 hashTable * set = new_Table(3);
+						 listNode * p = keys->head;
+						 for (p;p;p=p->next)
+						{
+						 sds *t_member = new_sds(p->value); 
+						 addTable(set,t_member,NULL,5);
+
+						}
+						  p = keys_2->head;
+						 for (p;p;p=p->next)
+						{
+						 sds *t_member = new_sds(p->value); 
+						 addTable(set,t_member,NULL,5);
+						}
+							 list * keys_3 =keysTable(set);
+							 {
+								 char *str = malloc(sizeof(char)*200);
+								 memset(str,0,sizeof(char)*200);
+								 listNode * p = keys_3->head;
+								 for (p;p;p=p->next)
+								 {
+									 strcat(str,p->value);
+									 strcat(str,"\n");
+								 }
+							 
+							 freeTable(set);
+							 return str;
+							 }
+					 }
+					 //s1 exists and has members but s2 null
+					 else
+					 {
+						 list * keys =keysTable(node_2->value);
+						 if (keys)
+						 {
+							 char *str = malloc(sizeof(char)*200);
+							 memset(str,0,sizeof(char)*200);
+							 listNode * p = keys->head;
+							 for (p;p;p=p->next)
+							 {
+								 strcat(str,p->value);
+								 strcat(str,"\n");
+							 }
+							 return str;
+						 }
+						 else 
+							 return "(nil)";
+					 }
+				}else
+						return "(error) WRONGTYPE Operation against a key holding the wrong kind of value";
+			 //s1 exists and has members but s2 not exists
+			 else
+			 {
+				 list * keys =keysTable(hnode->value);
+				 if (keys)
+				 {
+				 char *str = malloc(sizeof(char)*200);
+				 memset(str,0,sizeof(char)*200);
+				 listNode * p = keys->head;
+				 for (p;p;p=p->next)
+				 {
+					 strcat(str,p->value);
+					 strcat(str,"\n");
+				 }
+				 return str; 
+				 }
+				 else 
+				 return "(nil)";
+			 }
 		 }
 	   //s1 = null
 	     else
 		 {
-
-	     }
+			 list * keys =keysTable(node_2->value);
+			 if (keys)
+			 {
+				 char *str = malloc(sizeof(char)*200);
+				 memset(str,0,sizeof(char)*200);
+				 listNode * p = keys->head;
+				 for (p;p;p=p->next)
+				 {
+					 strcat(str,p->value);
+					 strcat(str,"\n");
+				 }
+				 return str; 
+			 }
+			 else 
+				 return "(nil)";
+		 }
+		  }
 		  else
 		      return "(error) WRONGTYPE Operation against a key holding the wrong kind of value";
 	  
 	   // s1 = not exists  
 	   else
 	   {
-
+		   list * keys =keysTable(node_2->value);
+			 if (keys)
+			 {
+				 char *str = malloc(sizeof(char)*200);
+				 memset(str,0,sizeof(char)*200);
+				 listNode * p = keys->head;
+				 for (p;p;p=p->next)
+				 {
+					 strcat(str,p->value);
+					 strcat(str,"\n");
+				 }
+				 return str; 
+			 }
+			 else 
+				 return "(nil)";
 	   }
 	}
 
@@ -1181,7 +1395,7 @@ char * call(hashTable *table,int i,list *cmd_list_head)
 	else if (i==42)
 	{
         if (len!=2)
-			return "(error) ERR wrong number of arguments for 'smembersm' command"; 
+			return "(error) ERR wrong number of arguments for 'smembers' command"; 
 	    hashNode *hnode =getTable(table,key);
 	   if (hnode)
 		  if(hnode->type==5)
@@ -1208,14 +1422,326 @@ char * call(hashTable *table,int i,list *cmd_list_head)
 		  return "(nil)";
 	}
 
+	//command is "lpushx"
+    else if (i==43)
+	{
+		if (len!=3)
+			return "(error) ERR wrong number of arguments for 'lpushx' command";
+		node=(node->next)->next;
+        char * value =malloc(sizeof(char)*strlen(node->value));	
+        strcpy(value,node->value);
+
+		hashNode * hnode =getTable(table,key);
+		if (hnode)
+			if (hnode->type ==3)
+			{
+			   cmd_list_lpush((list *)(hnode->value),value);
+		       return "OK!";
+			}
+			else
+		       return "(error) WRONGTYPE Operation against a key holding the wrong kind of value";
+		  else 
+			  return "(null)";
+
+	}
+    //command is "rpushx"
+	else if (i==44)
+	{
+        if (len!=3)
+		
+			return "(error) ERR wrong number of arguments for 'rpushx' command";
+		node=(node->next)->next;
+		char * value =malloc(sizeof(char)*strlen(node->value));
+	    strcpy(value,node->value);
+
+		hashNode * hnode =getTable(table,key);
+		if (hnode)
+			if (hnode->type ==3)
+			{
+			   cmd_list_append((list *)(hnode->value),value);
+			   printf("append value =%s\n",value);
+		       return "rpush OK!";
+            hashTable * t = new_Table(3);
+			}
+			else 
+		       return "(error) WRONGTYPE Operation against a key holding the wrong kind of value";
+		else 
+		    return "(null)";
+	}
+    //command is "lrange"
+	else if (i==45)
+	{
+		if (len!=4)
+			return "(error) ERR wrong number of arguments for 'lrange' command";
+       	node=(node->next)->next;
+		int i;
+		char * value = node->value;
+        int start = atoi(value);
+		node = node->next;
+		char * value_2 = node->value;
+		int stop = atoi(value_2);
+
+		hashNode *hnode = getTable(table,key);
+     	if (hnode)
+			if (((list *)(hnode->value))->head)
+			    if (hnode->type ==3)
+			{
+		        char * str =  malloc(sizeof(char )*50);
+				memset(str,0,sizeof(char)*50);
+				for (i=start;i<stop;i++)
+				{
+					if(cmd_list_lindex((list *)(hnode->value),i))
+				{
+					strcat(str,cmd_list_lindex((list *)(hnode->value),i));
+				    strcat(str,"\n");
+				}else
+					return str;
+				}
+				return str;
+			}
+			else 
+		       return "(error) WRONGTYPE Operation against a key holding the wrong kind of value"; 
+			else
+				return "(data nill)";
+		else
+		   return "(key nil)";
+	}
+	//command is "lrem"
+	else if (i==46)
+	{
+		return "sorry for not support this command";
+		if (len!=4)
+			return "(error) ERR wrong number of arguments for 'lrem' command";
+		node=(node->next)->next;
+		char * count = node->value;
+        int c = atoi(count);
+		node = node->next;
+		char * value = node->value;
+	
+	    if (c>0)
+		{
+
+		}
+		else if (c<0)
+		{
+
+		}
+		else if (c==0)	
+		{
+
+		}
+	
+	}
+	//command is "lset"
+	else if (i==47)
+	{
+
+		if(len!=4)
+			return "(error) ERR wrong number of arguments for 'lset' command";
+       	node=(node->next)->next;
+		char * value = node->value;
+		node = node->next;
+		char * v = node->value;
+		char * v_ =malloc(sizeof(char)*strlen(node->value));
+		strcpy(v_,v);
+		int count = atoi(value);
+         hashNode *hnode = getTable(table,key);
+     	if (hnode)
+			if (((list *)(hnode->value))->head)
+			    if (hnode->type ==3)
+			{
+		        char * str =  malloc(sizeof(char )*50);
+				memset(str,0,sizeof(char)*50);
+				if(cmd_list_lindex((list *)(hnode->value),count))
+				{
+					cmd_list_lset(((list *)(hnode->value)),count,v_);
+				    return "lset OK!";
+				}else
+					return "(null)";
+			}
+			else 
+		       return "(error) WRONGTYPE Operation against a key holding the wrong kind of value"; 
+			else
+				return "(data nill)";
+		else
+		   return "(key nil)";
 
 
-	//command is "getbit"
+		return "not support yet!";
+	}
+	//command is "lindex"
+	else if (i==48)
+	{
+		if(len!=3)
+			return "(error) ERR wrong number of arguments for 'lindex' command";
+       	node=(node->next)->next;
+		char * value = node->value;
+		int count = atoi(value);
+          hashNode *hnode = getTable(table,key);
+     	if (hnode)
+			if (((list *)(hnode->value))->head)
+			    if (hnode->type ==3)
+			{
+		        char * str =  malloc(sizeof(char )*50);
+				memset(str,0,sizeof(char)*50);
+				if(cmd_list_lindex((list *)(hnode->value),count))
+				{strcpy(str,cmd_list_lindex((list *)(hnode->value),count));
+				    return str;
+				}else
+					return "(null)";
+			}
+			else 
+		       return "(error) WRONGTYPE Operation against a key holding the wrong kind of value"; 
+			else
+				return "(data nill)";
+		else
+		   return "(key nil)";
+
+
+
+	}
+	//command is "ltrim"
+	else if (i==49)
+	{
+	return "sorry,not support yet!";
+	}
+	//command is "linsert"
+	else if (i==50)
+	{	
+		return "sorry,not support yet!";
+		if(len!=5)
+			return "(error) ERR wrong number of arguments for 'linsert' command";
+
+	}
+
+	//command is "rpoplpush"
+	else if (i==51)
+	{
+    	if (len!=3)
+			return "(error) ERR wrong number of arguments for 'rpoplpush' command";
+	    hashNode *hnode = getTable(table,key);
+		
+		node=(node->next)->next;
+		char * value =malloc(sizeof(char)*strlen(node->value));
+	    strcpy(value,node->value);
+		char * str =  malloc(sizeof(char )*50);
+     	if (hnode)
+			if (((list *)(hnode->value))->tail)
+			    if (hnode->type ==3)
+			{
+				memset(str,0,sizeof(char)*50);
+				strcpy(str,cmd_list_rget((list *)(hnode->value))); 
+				
+				cmd_list_rpop((list *)(hnode->value));
+			    
+				
+				hashNode * hnode_2 =getTable(table,value);
+				if (hnode_2)
+					if (hnode_2->type ==3)
+					{
+						cmd_list_lpush((list *)(hnode_2->value),str);
+						return str;
+					}
+					else
+						return "(error) WRONGTYPE Operation against a key holding the wrong kind of value";
+				else 
+				{
+					list * l = cmd_list_init(str);
+					sds* t_key= new_sds(value);
+					addTable(table,t_key,l,3);   
+					return "init OK!";
+				}
+			}
+			    else 
+		           return "(error) WRONGTYPE Operation against a key holding the wrong kind of value"; 
+			else
+				return "(rpoprpush data nill)";
+		else
+		   return "(key nil)";
+	}
+
+	//command is "blpop"
+	else if (i==52)
+	{
+
+		return "sorry for not support yet";
+
+			//
+		if (len!=2)
+			return "(error) ERR wrong number of arguments for 'blpop' command";
+	    hashNode *hnode = getTable(table,key);
+     	if (hnode)
+			if (((list *)(hnode->value))->head)
+			    if (hnode->type ==3)
+			{
+		        char * str =  malloc(sizeof(char )*50);
+				memset(str,0,sizeof(char)*50);
+				strcpy(str,cmd_list_lget((list *)(hnode->value))); 
+				cmd_list_lpop((list *)(hnode->value));
+				return str;
+			}
+			else 
+		       return "(error) WRONGTYPE Operation against a key holding the wrong kind of value"; 
+			else
+			{
+				while (1)
+				{
+					if (hnode)
+						if (((list *)(hnode->value))->head)
+							if (hnode->type ==3)
+							{
+								char * str =  malloc(sizeof(char )*50);
+								memset(str,0,sizeof(char)*50);
+								strcpy(str,cmd_list_lget((list *)(hnode->value))); 
+								cmd_list_lpop((list *)(hnode->value));
+								return str;
+							}
+							else 
+								return "(error) WRONGTYPE Operation against a key holding the wrong kind of value";
+						else
+							continue;
+					else 
+						continue;
+				}
+			}
+		else
+		{
+			while (1)
+				{
+					if (hnode)
+						if (((list *)(hnode->value))->head)
+							if (hnode->type ==3)
+							{
+								char * str =  malloc(sizeof(char )*50);
+								memset(str,0,sizeof(char)*50);
+								strcpy(str,cmd_list_lget((list *)(hnode->value))); 
+								cmd_list_lpop((list *)(hnode->value));
+								return str;
+							}
+							else 
+								return "(error) WRONGTYPE Operation against a key holding the wrong kind of value";
+						else
+							continue;
+					else 
+						continue;
+				}
+		}
+	}
+
+	//command is "brpop"
 	
-	//command is "setbit"
-	
-	//command is "bitcount"
-	
+	else if (i==53)
+	{
+	return " sorry,not support yet!";
+
+	}
+
+	//command is "brpoplpush"
+	else if (i==54)
+	{
+	return "sorry,not support yet!";
+
+	}
 }
 
 
